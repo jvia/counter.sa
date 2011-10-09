@@ -17,13 +17,13 @@ public class Count extends ManagedComponent implements WorkingMemoryChangeReceiv
 
     private static int count;
     // Error behavior
-    //public static final int ERROR_COUNT = 2000;
-    //public static final int RECOVERY_COUNT = 3000;
-    //public static final int SHUTDOWN_COUNT = 4200;
-    // No error
-    public static final int ERROR_COUNT = Integer.MAX_VALUE;
-    public static final int RECOVERY_COUNT = Integer.MAX_VALUE;
+    public static final int ERROR_COUNT = 2000;
+    public static final int RECOVERY_COUNT = 3000;
     public static final int SHUTDOWN_COUNT = Integer.MAX_VALUE;
+    // No error
+//    public static final int ERROR_COUNT = Integer.MAX_VALUE;
+//    public static final int RECOVERY_COUNT = Integer.MAX_VALUE;
+//    public static final int SHUTDOWN_COUNT = Integer.MAX_VALUE;
 
     public Count()
     {
@@ -53,22 +53,15 @@ public class Count extends ManagedComponent implements WorkingMemoryChangeReceiv
         if (count == ERROR_COUNT)
             println(">>>>>>>>>> ERROR INDUCED AT " + cast2Ms(wmc.timestamp) + " ms <<<<<<<<<<");
 
+        if (count == RECOVERY_COUNT)
+            println(">>>>>>>>>> RECOVERY AT " + cast2Ms(wmc.timestamp) + " ms <<<<<<<<<<");
+
         // We're collecting 4,000 observations in the time series
         if (count == SHUTDOWN_COUNT) {
             println(">>>>>>>>>> System Going Down <<<<<<<<<<");
             System.exit(0);
         }
 
-    }
-
-    public static int getCount()
-    {
-        return count;
-    }
-
-    public static void reset()
-    {
-        count = 0;
     }
 
     public static long cast2Ms(CASTTime ct)
