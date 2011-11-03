@@ -22,6 +22,13 @@
   <!-- Source generation                                                   -->
   <!-- =================================================================== -->
   <target name="slice" depends="prepare" description="generates source from slice">
+    <echo>Starting slice</echo>
+    <slice2java tie="true" outputdir="${src.dir}">
+      <fileset dir="${slice.dir}" includes="int.ice"/>
+      <includepath>
+        <pathelement path="${slice.dir}"/>
+      </includepath>
+    </slice2java>
   </target>
 
   <!-- =================================================================== -->

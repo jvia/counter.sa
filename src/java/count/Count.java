@@ -10,12 +10,13 @@ import cast.cdl.WorkingMemoryOperation;
 
 /**
  * Just count memory events. Used to control the induction of errors.
- * 
+ *
  * @author jxv911
  */
 public class Count extends ManagedComponent implements WorkingMemoryChangeReceiver {
 
     private static int count;
+    private static String id;
     // Error behavior
     public static final int ERROR_COUNT = 2000;
     public static final int RECOVERY_COUNT = 3000;
@@ -25,14 +26,13 @@ public class Count extends ManagedComponent implements WorkingMemoryChangeReceiv
 //    public static final int RECOVERY_COUNT = Integer.MAX_VALUE;
 //    public static final int SHUTDOWN_COUNT = Integer.MAX_VALUE;
 
-    public Count()
-    {
+    public Count() {
         count = 0;
+        id = newDataID();
     }
 
     @Override
-    public void start()
-    {
+    public void start() {
         StringBuilder b = new StringBuilder("Listening on: ");
         for (String name : getComponentManager().getComponentDescriptions().keySet()) {
             b.append(name).append(" ");
@@ -42,14 +42,14 @@ public class Count extends ManagedComponent implements WorkingMemoryChangeReceiv
     }
 
     @Override
-    public void workingMemoryChanged(WorkingMemoryChange wmc) throws CASTException
-    {
+    public void workingMemoryChanged(WorkingMemoryChange wmc) throws CASTException {
         ++count;
+        //overwriteWorkingMemory(wmc.address, new Number(count));
 
         if (count % 100 == 0) {
             println(">>>>> " + count);
         }
-        
+
         if (count == ERROR_COUNT)
             println(">>>>>>>>>> ERROR INDUCED AT " + cast2Ms(wmc.timestamp) + " ms <<<<<<<<<<");
 
@@ -59,18 +59,17 @@ public class Count extends ManagedComponent implements WorkingMemoryChangeReceiv
         // We're collecting 4,000 observations in the time series
         if (count == SHUTDOWN_COUNT) {
             println(">>>>>>>>>> System Going Down <<<<<<<<<<");
-            System.exit(0);
+            stop();
+            //System.exit(0);
         }
 
     }
 
-    public static long cast2Ms(CASTTime ct)
-    {
+    public static long cast2Ms(CASTTime ct) {
         return 1000 * ct.s + (ct.us / 1000);
     }
 
-    public static boolean isErrorCondition()
-    {
+    public static boolean isErrorCondition() {
         return ERROR_COUNT < count && count < RECOVERY_COUNT;
     }
 }
